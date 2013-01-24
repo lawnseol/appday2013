@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<link rel="stylesheet" href="styles/main.css">
+		<title>RSS Information Finder</title>
+		<script src="js/jquery.js"></script>
+		<script>
+			function getInformation() {
+				var url = $("#url").val();
+				console.debug("START AJAX:"+url);
+				var xhr = new XMLHttpRequest({mozSystem: true});
+				var resonseXML;
+				xhr.open("GET", url,true);
+				xhr.withCredentials = "true";
+				xhr.addEventListener('load', function dataLoaded(e) {
+					console.log("LOADED");
+					if (xhr.status == 200 || xhr.status == 0) {
+						console.log("SUCCESS");
+						appendList(xhr.response);
+					} else {
+						colsole.log("ERROR");
+					}
+				});
+				xhr.addEventListener("error", function transferFailed(e) {
+					console.log("An error occured while transferring the file.");
+				});
+				xhr.send();
+			}
+			
+			function appendList(xml) { // xml : child object
+				var htmlCode = "";
+				xmlDoc = $.parseXML(xml);
+				$xml = $(xmlDoc);
+				$channel = $xml.find("channel");
+				$title = $channel.children().get(0);
+				$description = $channel.children().get(2);
+				$("#article").append('<div class="title">');
+				$("#article").append($title);
+				$("#article").append('</div>');
+				$("#article").append('<div class="description">');
+				$("#article").append($description);
+				$("#article").append('</div>');
+			}
+
+			function clear() {
+			}
+		</script>
+	</head>
+	<body>
+		<header>
+		<div class="search">
+			<input type="text" id="url" name="url" value="http://igna.tistory.com/rss">
+			<img src="" alt="get" onclick="javascript:getInformation();">
+		</div>
+		</header>
+		<article>
+			<div class="article" id="article"></div>
+		</article>
+		<footer>
+			<div class="copyright">Simple RSS Reader</div>
+		</footer>
+	</body>
+</html>
